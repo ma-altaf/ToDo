@@ -10,38 +10,39 @@ namespace ToDo.Controllers
     [Route("api/[controller]")]
     public class TodoController : Controller
     {
-        private readonly DataContext _context;
+        private readonly DataContext ctx;
+
         public TodoController(DataContext context)
         {
-            _context = context;
+            ctx = context;
         }
 
         [HttpPost("add")]
         public async Task<IActionResult> AddTodoItem(AddTodoItemDto item)
         {
-            _context.TodoItems.Add(new TodoItem
+            ctx.TodoItems.Add(new TodoItem
             {
                 Title = item.Title,
                 Description = item.Description,
                 Status = TodoItem.StatusEnum.todo
             });
-            await _context.SaveChangesAsync();
+            await ctx.SaveChangesAsync();
 
             return Ok();
         }
 
         [HttpGet]
-        public async Task<IActionResult> getTodoItems()
+        public async Task<IActionResult> GetTodoItems()
         {
-            List<TodoItem> todoItems = await _context.TodoItems.ToListAsync();
+            List<TodoItem> todoItems = await ctx.TodoItems.ToListAsync();
 
             return Ok(todoItems);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> getTodoItemById(int id)
+        public async Task<IActionResult> GetTodoItemById(int id)
         {
-            TodoItem? todoItem = await _context.TodoItems.FindAsync(id);
+            TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
             if (todoItem == null) return NotFound(new { Message = $"{id} not a valid item id." });
 
@@ -49,18 +50,31 @@ namespace ToDo.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> getTodoItemById(int id, UpdateTodoItem newItem)
+        public async Task<IActionResult> GetTodoItemById(int id, UpdateTodoItem newItem)
         {
-            TodoItem? todoItem = await _context.TodoItems.FindAsync(id);
+            TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
             if (todoItem == null) return NotFound(new { Message = $"{id} not a valid item id." });
 
             todoItem.Title = newItem.Title;
             todoItem.Description = newItem.Description;
 
-            await _context.SaveChangesAsync();
+            await ctx.SaveChangesAsync();
 
             return Ok(todoItem);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTodoItemById(int id)
+        {
+            TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
+
+            if (todoItem == null) return NotFound(null);
+
+            ctx.TodoItems.Remove(todoItem);
+
+            await ctx.SaveChangesAsync();
+            return Ok();
         }
     }
 }
