@@ -1,6 +1,36 @@
 @ToDo_HostAddress = http://localhost:5064
 
-GET {{ToDo_HostAddress}}/weatherforecast/
-Accept: application/json
+GET {{ToDo_HostAddress}}/api/todo
+Content-Type: application/json
+
+###
+
+GET {{ToDo_HostAddress}}/api/todo/1
+Content-Type: application/json
+
+###
+
+POST {{ToDo_HostAddress}}/api/todo/add
+Content-Type: application/json
+
+{
+  "title": "http",
+  "description": "daf"
+}
+
+###
+
+PUT {{ToDo_HostAddress}}/api/todo/5
+Content-Type: application/json
+
+{
+  "title": "http",
+  "description": "daf"
+}
+
+###
+
+DELETE {{ToDo_HostAddress}}/api/todo/4
+Content-Type: application/json
 
 ###
