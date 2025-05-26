@@ -20,10 +20,12 @@ namespace ToDo.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddTodoItem(AddTodoItemDto item)
         {
+            if (item.Title.Trim().Length == 0) return BadRequest(new { Message = "Title is required." });
+
             ctx.TodoItems.Add(new TodoItem
             {
-                Title = item.Title,
-                Description = item.Description,
+                Title = item.Title.Trim(),
+                Description = item.Description?.Trim(),
                 Status = TodoItem.StatusEnum.todo
             });
             await ctx.SaveChangesAsync();
@@ -56,8 +58,10 @@ namespace ToDo.Controllers
 
             if (todoItem == null) return NotFound(new { Message = $"{id} not a valid item id." });
 
-            todoItem.Title = newItem.Title;
-            todoItem.Description = newItem.Description;
+            if (newItem.Title.Trim().Length == 0) return BadRequest(new { Message = "Title is required." });
+
+            todoItem.Title = newItem.Title.Trim();
+            todoItem.Description = newItem.Description?.Trim();
 
             await ctx.SaveChangesAsync();
 
