@@ -2,17 +2,28 @@ import { TToDoItem } from "./types";
 
 const TODO_URL = process.env.NEXT_PUBLIC_URL + "/api/Todo";
 
+async function response(res: Promise<Response>) {
+  const promise = await res;
+  if (promise.status >= 400) return Promise.reject(await promise.json());
+  return promise;
+}
+
 export async function addItem(
   newItem: Pick<TToDoItem, "title" | "description">
 ) {
-  return fetch(TODO_URL + "/add", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newItem),
-  });
+  if (newItem.title.trim().length == 0)
+    return Promise.reject(new Error("Title is required."));
+
+  return response(
+    fetch(TODO_URL + "/add", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newItem),
+    })
+  );
 }
 
 export async function getItems() {

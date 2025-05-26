@@ -19,8 +19,13 @@
   }
 }
 
+html,
 * {
-  box-sizing: content-box;
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
 }
 
 body {
