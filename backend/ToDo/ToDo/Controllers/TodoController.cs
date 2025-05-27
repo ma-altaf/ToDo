@@ -22,15 +22,23 @@ namespace ToDo.Controllers
         {
             if (item.Title.Trim().Length == 0) return BadRequest(new { Message = "Title is required." });
 
-            ctx.TodoItems.Add(new TodoItem
+            try
             {
-                Title = item.Title.Trim(),
-                Description = item.Description?.Trim(),
-                Status = TodoItem.StatusEnum.todo
-            });
-            await ctx.SaveChangesAsync();
+                var DbItem = ctx.TodoItems.Add(new TodoItem
+                {
+                    Title = item.Title.Trim(),
+                    Description = item.Description?.Trim(),
+                    Status = TodoItem.StatusEnum.todo
+                });
+                await ctx.SaveChangesAsync();
 
-            return Ok();
+                return Ok(DbItem.Entity);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+
         }
 
         [HttpGet]
@@ -77,7 +85,15 @@ namespace ToDo.Controllers
 
             ctx.TodoItems.Remove(todoItem);
 
-            await ctx.SaveChangesAsync();
+            try
+            {
+                await ctx.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+
             return Ok();
         }
     }
