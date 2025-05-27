@@ -22,14 +22,8 @@ export async function addItem(
   return promise.json();
 }
 
-// export async function getItems(): Promise<TToDoItem[]> {
-export async function getItems() {
-  try {
-    const res = (await fetch(TODO_URL)).json();
-    return res;
-  } catch (error) {
-    console.log(error);
-  }
+export async function getItems(): Promise<TToDoItem[]> {
+  return (await fetch(TODO_URL)).json();
 }
 
 export async function getItemById(id: number): Promise<TToDoItem> {

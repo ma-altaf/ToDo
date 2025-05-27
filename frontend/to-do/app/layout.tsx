@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import TodoContextProvider from "@/features/items/components/TodoProvider";
+import { getItems } from "@/features/items/services/main";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,17 +19,20 @@ export const metadata: Metadata = {
   description: "Manage todo items",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const todosPromise = getItems();
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <TodoContextProvider todosPromise={todosPromise}>
+          {children}
+        </TodoContextProvider>
       </body>
     </html>
   );

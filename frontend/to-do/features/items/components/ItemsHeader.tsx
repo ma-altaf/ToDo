@@ -2,6 +2,7 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { addItem } from "../services/main";
+import { useTodosContext } from "./TodoProvider";
 
 export default function ItemsHeader() {
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
@@ -27,6 +28,7 @@ function AddNewItem({
 }: {
   setIsAddItemOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const [, setTodos] = useTodosContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [warning, setWarning] = useState("");
@@ -34,13 +36,10 @@ function AddNewItem({
   function submit(title: string, description: string) {
     addItem({ title, description })
       .then((res) => {
-        console.log(res);
-
+        setTodos((prev) => [res, ...prev]);
         setIsAddItemOpen(false);
       })
       .catch((e) => {
-        console.log(e);
-
         setWarning(e.message);
       });
   }
