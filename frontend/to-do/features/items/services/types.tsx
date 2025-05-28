@@ -8,5 +8,6 @@ export type TToDoItem = {
   id: number;
   title: string;
   description?: string;
+  deadline: string;
   status: StatusEnum;
 };

@@ -8,7 +8,7 @@ export default function ItemsHeader() {
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
 
   return (
-    <div className="w-full p-1 flex flex-row justify-end">
+    <div className="w-full mb-2 flex flex-row justify-end">
       {isAddItemOpen ? (
         <AddNewItem setIsAddItemOpen={setIsAddItemOpen} />
       ) : (
@@ -31,10 +31,12 @@ function AddNewItem({
   const [, setTodos] = useTodosContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [deadline, setDeadline] = useState(new Date());
+
   const [warning, setWarning] = useState("");
 
-  function submit(title: string, description: string) {
-    addItem({ title, description })
+  function submit(title: string, description: string, deadline: Date) {
+    addItem({ title, description, deadline: deadline.toISOString() })
       .then((res) => {
         setTodos((prev) => [res, ...prev]);
         setIsAddItemOpen(false);
@@ -64,6 +66,57 @@ function AddNewItem({
         onChange={(e) => setDescription(e.target.value)}
       />
 
+      <p>Deadline:</p>
+      <span className="flex flex-col md:flex-row justify-center items-center mb-2">
+        <label
+          htmlFor="deadline-date"
+          className="w-full flex flex-row justify-center items-center"
+        >
+          Date:
+          <input
+            className="py-1 px-2 ml-1 w-full rounded-md bg-white/5"
+            id="deadline-date"
+            type="date"
+            defaultValue={deadline.toLocaleDateString("en-ca")}
+            onChange={(e) =>
+              setDeadline((prev) => {
+                if (!e.target.valueAsDate) return prev;
+
+                prev.setDate(e.target.valueAsDate.getDate());
+                prev.setMonth(e.target.valueAsDate.getMonth());
+                prev.setFullYear(e.target.valueAsDate.getFullYear());
+
+                return prev;
+              })
+            }
+          />
+        </label>
+
+        <hr className="size-5 border-0" />
+
+        <label
+          htmlFor="deadline-time"
+          className="w-full flex flex-row justify-center items-center"
+        >
+          Time:
+          <input
+            className="py-1 px-2 ml-1 w-full rounded-md bg-white/5"
+            id="deadline-time"
+            type="time"
+            defaultValue={deadline.toLocaleTimeString("it-IT")}
+            onChange={(e) => {
+              setDeadline((prev) => {
+                if (!e.target.valueAsDate) return prev;
+
+                prev.setTime(e.target.valueAsNumber);
+
+                return prev;
+              });
+            }}
+          />
+        </label>
+      </span>
+
       {warning && (
         <div className="py-1 px-2 mb-2 rounded-md text-amber-500 bg-amber-500/10">
           {warning}
@@ -79,7 +132,7 @@ function AddNewItem({
         </button>
         <button
           className="px-3 py-1 rounded-md bg-white/10 w-fit"
-          onClick={() => submit(title, description)}
+          onClick={() => submit(title, description, deadline)}
         >
           Submit
         </button>

@@ -3,7 +3,7 @@ import { TToDoItem } from "./types";
 const TODO_URL = process.env.NEXT_PUBLIC_URL + "/api/Todo";
 
 export async function addItem(
-  newItem: Pick<TToDoItem, "title" | "description">
+  newItem: Pick<TToDoItem, "title" | "description" | "deadline">
 ): Promise<TToDoItem> {
   if (newItem.title.trim().length == 0)
     return Promise.reject(new Error("Title is required."));
@@ -23,7 +23,12 @@ export async function addItem(
 }
 
 export async function getItems(): Promise<TToDoItem[]> {
-  return (await fetch(TODO_URL)).json();
+  try {
+    return (await fetch(TODO_URL)).json();
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 }
 
 export async function getItemById(id: number): Promise<TToDoItem> {
