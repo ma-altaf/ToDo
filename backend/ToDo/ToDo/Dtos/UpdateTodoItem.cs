@@ -2,6 +2,7 @@
 {
     public record class UpdateTodoItem(
         string Title,
-        string? Description
+        string? Description,
+        DateTime Deadline
     );
 }

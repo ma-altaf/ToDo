@@ -28,6 +28,7 @@ namespace ToDo.Controllers
                 {
                     Title = item.Title.Trim(),
                     Description = item.Description?.Trim(),
+                    Deadline = item.Deadline,
                     Status = TodoItem.StatusEnum.todo
                 });
                 await ctx.SaveChangesAsync();
@@ -70,6 +71,7 @@ namespace ToDo.Controllers
 
             todoItem.Title = newItem.Title.Trim();
             todoItem.Description = newItem.Description?.Trim();
+            todoItem.Deadline = newItem.Deadline;
 
             await ctx.SaveChangesAsync();
 
