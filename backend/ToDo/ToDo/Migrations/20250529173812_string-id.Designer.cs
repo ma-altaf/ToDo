@@ -12,8 +12,8 @@ using ToDo.Data;
 namespace ToDo.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250528172337_deadline")]
-    partial class deadline
+    [Migration("20250529173812_string-id")]
+    partial class stringid
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,13 +27,10 @@ namespace ToDo.Migrations
 
             modelBuilder.Entity("ToDo.Models.TodoItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("Deadline")
+                    b.Property<DateTime>("Deadline")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")

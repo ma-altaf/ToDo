@@ -1,4 +1,4 @@
-@ToDo_HostAddress = http://localhost:5064
+@ToDo_HostAddress = http://localhost:5001
 
 GET {{ToDo_HostAddress}}/api/todo
 Content-Type: application/json
@@ -34,3 +34,6 @@ DELETE {{ToDo_HostAddress}}/api/todo/4
 Content-Type: application/json
 
 ###
+
+DELETE {{ToDo_HostAddress}}/api/todo/
+Content-Type: application/json

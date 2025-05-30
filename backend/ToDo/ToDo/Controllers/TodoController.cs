@@ -51,7 +51,7 @@ namespace ToDo.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetTodoItemById(int id)
+        public async Task<IActionResult> GetTodoItemById(string id)
         {
             TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
@@ -61,7 +61,7 @@ namespace ToDo.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> GetTodoItemById(int id, UpdateTodoItem newItem)
+        public async Task<IActionResult> GetTodoItemById(string id, UpdateTodoItem newItem)
         {
             TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
@@ -79,13 +79,34 @@ namespace ToDo.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTodoItemById(int id)
+        public async Task<IActionResult> DeleteTodoItemById(string id)
         {
             TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
             if (todoItem == null) return NotFound(null);
 
             ctx.TodoItems.Remove(todoItem);
+
+            try
+            {
+                await ctx.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { ex.Message });
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete()]
+        public async Task<IActionResult> DeleteTodoItems()
+        {
+            List<TodoItem> todoItems = await ctx.TodoItems.ToListAsync();
+
+            if (todoItems == null) return NotFound(null);
+
+            ctx.TodoItems.RemoveRange(todoItems);
 
             try
             {

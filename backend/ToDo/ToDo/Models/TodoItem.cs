@@ -1,4 +1,6 @@
-﻿namespace ToDo.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ToDo.Models
 {
     public class TodoItem
     {
@@ -9,7 +11,8 @@
             blocked
         }
 
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string? Id { get; set; }
         public required string Title { get; set; }
         public string? Description { get; set; }
         public DateTime Deadline { get; set; }
