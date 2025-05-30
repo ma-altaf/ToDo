@@ -1,10 +1,22 @@
 "use client";
 
-import { createContext, Dispatch, SetStateAction, use, useState } from "react";
-import { TToDoItem } from "../services/types";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  use,
+  useOptimistic,
+  useState,
+} from "react";
+import { EStatus, TToDoItem, TToDoReducer } from "../services/types";
 
 const todoContext = createContext<
-  [TToDoItem[], Dispatch<SetStateAction<TToDoItem[]>>] | undefined
+  | {
+      todos: TToDoItem[];
+      dispatch: (action: TToDoReducer) => void;
+      setDbTodos: Dispatch<SetStateAction<TToDoItem[]>>;
+    }
+  | undefined
 >(undefined);
 
 export default function TodoContextProvider({
@@ -14,10 +26,33 @@ export default function TodoContextProvider({
   children: React.ReactNode;
   todosPromise: Promise<TToDoItem[]>;
 }) {
-  const todosState = useState(use(todosPromise));
+  const [dbTodos, setDbTodos] = useState(use(todosPromise));
+
+  const [todos, dispatch] = useOptimistic(dbTodos, reducer);
+
+  function reducer(state: TToDoItem[], action: TToDoReducer) {
+    switch (action.type) {
+      case "add":
+        const { deadline, title, description } = action.data;
+
+        const optTodo: TToDoItem = {
+          id: crypto.randomUUID(),
+          title,
+          description,
+          deadline,
+          status: EStatus.syncing,
+        };
+
+        return [optTodo, ...state];
+    }
+
+    return state;
+  }
 
   return (
-    <todoContext.Provider value={todosState}>{children}</todoContext.Provider>
+    <todoContext.Provider value={{ todos, dispatch, setDbTodos }}>
+      {children}
+    </todoContext.Provider>
   );
 }
 

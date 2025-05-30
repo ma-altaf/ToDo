@@ -1,8 +1,8 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
-import { addItem } from "../services/main";
+import { Dispatch, SetStateAction, startTransition, useState } from "react";
 import { useTodosContext } from "./TodoProvider";
+import { addItem } from "../services/main";
 
 export default function ItemsHeader() {
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
@@ -28,7 +28,7 @@ function AddNewItem({
 }: {
   setIsAddItemOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [, setTodos] = useTodosContext();
+  const { dispatch, setDbTodos } = useTodosContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState(new Date());
@@ -36,14 +36,26 @@ function AddNewItem({
   const [warning, setWarning] = useState("");
 
   function submit(title: string, description: string, deadline: Date) {
-    addItem({ title, description, deadline: deadline.toISOString() })
-      .then((res) => {
-        setTodos((prev) => [res, ...prev]);
-        setIsAddItemOpen(false);
-      })
-      .catch((e) => {
-        setWarning(e.message);
+    if (title.trim().length == 0) return setWarning("Title is required.");
+
+    startTransition(() => {
+      dispatch({
+        type: "add",
+        data: { title, description, deadline: deadline.toISOString() },
       });
+    });
+
+    startTransition(async () => {
+      const res = await addItem({
+        title,
+        description,
+        deadline: deadline.toISOString(),
+      });
+
+      setDbTodos((prev) => [res, ...prev]);
+    });
+
+    // setIsAddItemOpen(false);
   }
 
   return (

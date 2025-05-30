@@ -8,18 +8,24 @@ export async function addItem(
   if (newItem.title.trim().length == 0)
     return Promise.reject(new Error("Title is required."));
 
-  const promise = await fetch(TODO_URL + "/add", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newItem),
-  });
+  try {
+    const promise = await fetch(TODO_URL + "/add", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newItem),
+    });
 
-  if (promise.status >= 400) return Promise.reject(await promise.json());
+    if (promise.status >= 400) return Promise.reject(await promise.json());
 
-  return promise.json();
+    return promise.json();
+  } catch (error) {
+    console.log(error);
+
+    return Promise.reject("fetch failed");
+  }
 }
 
 export async function getItems(): Promise<TToDoItem[]> {
@@ -37,7 +43,7 @@ export async function getItemById(id: number): Promise<TToDoItem> {
 
 export async function updateItemById(
   id: number,
-  updatedItem: Pick<TToDoItem, "title" | "description">
+  updatedItem: Pick<TToDoItem, "title" | "description" | "deadline" | "status">
 ) {
   return await fetch(`${TODO_URL}/${id}`, {
     method: "PUT",

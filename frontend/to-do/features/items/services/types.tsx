@@ -1,13 +1,25 @@
-enum StatusEnum {
+export enum EStatus {
   todo,
   completed,
   blocked,
+  syncing,
 }
 
 export type TToDoItem = {
-  id: number;
+  id: string;
   title: string;
   description?: string;
   deadline: string;
-  status: StatusEnum;
+  status: EStatus;
 };
+
+export type TToDoReducer =
+  | {
+      type: "add";
+      data: Pick<TToDoItem, "deadline" | "title" | "description">;
+    }
+  | {
+      type: "update";
+      id: number;
+      data: Partial<TToDoItem>;
+    };
