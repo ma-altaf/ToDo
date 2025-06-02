@@ -37,7 +37,7 @@ function AddNewItem({
 
   function submit(title: string, description: string, deadline: Date) {
     if (title.trim().length == 0) return setWarning("Title is required.");
-
+    deadline.setSeconds(0);
     startTransition(() => {
       dispatch({
         type: "add",
@@ -55,7 +55,7 @@ function AddNewItem({
       setDbTodos((prev) => [res, ...prev]);
     });
 
-    // setIsAddItemOpen(false);
+    setIsAddItemOpen(false);
   }
 
   return (
