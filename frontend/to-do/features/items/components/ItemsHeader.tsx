@@ -115,7 +115,10 @@ function AddNewItem({
             className="py-1 px-2 ml-1 w-full rounded-md bg-white/5"
             id="deadline-time"
             type="time"
-            defaultValue={deadline.toLocaleTimeString("it-IT")}
+            defaultValue={deadline.toLocaleTimeString("it-IT", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
             onChange={(e) => {
               setDeadline((prev) => {
                 if (!e.target.valueAsDate) return prev;

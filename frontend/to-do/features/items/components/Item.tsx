@@ -1,12 +1,13 @@
 "use client";
 
+import { dateFromISO } from "@/shared/utils";
 import { TToDoItem } from "../services/types";
 import Status from "./ItemStatus";
 
 export default function Item({ item }: { item: TToDoItem }) {
   const { deadline, title, description, status } = item;
 
-  const deadlineDate = new Date(deadline);
+  const deadlineDate = dateFromISO(deadline);
 
   return (
     <li className="w-full p-2 flex flex-row">
