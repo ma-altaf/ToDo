@@ -1,5 +1,5 @@
 import ItemsSection from "@/features/items/components/ItemsSection";
-import Clock from "@/shared/components/Clock/Clock";
+import Clock from "@/shared/components/Clock";
 
 export default function Home() {
   return (

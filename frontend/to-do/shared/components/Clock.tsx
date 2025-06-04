@@ -1,11 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-
-const SecondBar = dynamic(() => import("./SecondBar"), {
-  ssr: false,
-});
 
 export default function Clock() {
   const [hour, setHour] = useState(new Date().getHours());
@@ -39,5 +34,17 @@ export default function Clock() {
       </div>
       <SecondBar second={second} />
     </span>
+  );
+}
+
+function SecondBar({ second }: { second: number }) {
+  return (
+    <div className="rounded-full h-2 m-0 w-full flex items-center justify-center border-foreground border-r-2 border-l-2">
+      <div
+        className="rounded-full h-1 m-0 w-full bg-foreground duration-300"
+        style={{ width: `${(second / 60) * 100}%` }}
+        suppressHydrationWarning
+      ></div>
+    </div>
   );
 }
