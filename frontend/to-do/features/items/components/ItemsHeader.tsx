@@ -1,6 +1,12 @@
 "use client";
 
-import { Dispatch, SetStateAction, startTransition, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  startTransition,
+  useRef,
+  useState,
+} from "react";
 import { useTodosContext } from "./TodoProvider";
 import { addItem } from "../services/main";
 
@@ -29,9 +35,9 @@ function AddNewItem({
   setIsAddItemOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const { dispatch, setDbTodos } = useTodosContext();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState(new Date());
+  const titleRef = useRef("");
+  const descriptionRef = useRef("");
+  const deadlineRef = useRef(new Date());
 
   const [warning, setWarning] = useState("");
 
@@ -65,8 +71,7 @@ function AddNewItem({
         className="py-1 px-2 mb-2 w-full rounded-md bg-white/5"
         id="title"
         type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e) => (titleRef.current = e.target.value)}
       />
 
       <label htmlFor="description">Description:</label>
@@ -74,8 +79,7 @@ function AddNewItem({
         className="py-1 px-2 mb-2 rounded-md bg-white/5"
         rows={3}
         id="description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        onChange={(e) => (descriptionRef.current = e.target.value)}
       />
 
       <p>Deadline:</p>
@@ -89,18 +93,16 @@ function AddNewItem({
             className="py-1 px-2 ml-1 w-full rounded-md bg-white/5"
             id="deadline-date"
             type="date"
-            defaultValue={deadline.toLocaleDateString("en-ca")}
-            onChange={(e) =>
-              setDeadline((prev) => {
-                if (!e.target.valueAsDate) return prev;
+            defaultValue={deadlineRef.current.toLocaleDateString("en-ca")}
+            onChange={(e) => {
+              if (!e.target.valueAsDate) return;
 
-                prev.setDate(e.target.valueAsDate.getDate());
-                prev.setMonth(e.target.valueAsDate.getMonth());
-                prev.setFullYear(e.target.valueAsDate.getFullYear());
-
-                return prev;
-              })
-            }
+              deadlineRef.current.setDate(e.target.valueAsDate.getDate() + 1);
+              deadlineRef.current.setMonth(e.target.valueAsDate.getMonth());
+              deadlineRef.current.setFullYear(
+                e.target.valueAsDate.getFullYear()
+              );
+            }}
           />
         </label>
 
@@ -115,18 +117,15 @@ function AddNewItem({
             className="py-1 px-2 ml-1 w-full rounded-md bg-white/5"
             id="deadline-time"
             type="time"
-            defaultValue={deadline.toLocaleTimeString("it-IT", {
+            defaultValue={deadlineRef.current.toLocaleTimeString("it-IT", {
               hour: "2-digit",
               minute: "2-digit",
             })}
             onChange={(e) => {
-              setDeadline((prev) => {
-                if (!e.target.valueAsDate) return prev;
+              if (!e.target.valueAsDate) return;
 
-                prev.setTime(e.target.valueAsNumber);
-
-                return prev;
-              });
+              deadlineRef.current.setHours(e.target.valueAsDate.getHours() + 1);
+              deadlineRef.current.setMinutes(e.target.valueAsDate.getMinutes());
             }}
           />
         </label>
@@ -147,7 +146,13 @@ function AddNewItem({
         </button>
         <button
           className="px-3 py-1 rounded-md bg-white/10 w-fit"
-          onClick={() => submit(title, description, deadline)}
+          onClick={() =>
+            submit(
+              titleRef.current,
+              descriptionRef.current,
+              deadlineRef.current
+            )
+          }
         >
           Submit
         </button>
