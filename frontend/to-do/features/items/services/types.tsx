@@ -20,6 +20,6 @@ export type TToDoReducer =
     }
   | {
       type: "update";
-      id: number;
-      data: Partial<TToDoItem>;
+      id: string;
+      data: Pick<TToDoItem, "deadline" | "title" | "description">;
     };

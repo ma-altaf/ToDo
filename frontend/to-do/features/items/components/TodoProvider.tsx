@@ -32,7 +32,7 @@ export default function TodoContextProvider({
 
   function reducer(state: TToDoItem[], action: TToDoReducer) {
     switch (action.type) {
-      case "add":
+      case "add": {
         const { deadline, title, description } = action.data;
 
         const optTodo: TToDoItem = {
@@ -44,9 +44,28 @@ export default function TodoContextProvider({
         };
 
         return [optTodo, ...state];
-    }
+      }
 
-    return state;
+      case "update": {
+        const { deadline, title, description } = action.data;
+
+        const optTodo: TToDoItem = {
+          id: action.id,
+          title,
+          description,
+          deadline,
+          status: EStatus.syncing,
+        };
+
+        state.map((item) => {
+          if (item.id == action.id) return optTodo;
+
+          return item;
+        });
+
+        return [...state];
+      }
+    }
   }
 
   return (

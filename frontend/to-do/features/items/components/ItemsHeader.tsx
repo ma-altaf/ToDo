@@ -124,7 +124,11 @@ function AddNewItem({
             onChange={(e) => {
               if (!e.target.valueAsDate) return;
 
-              deadlineRef.current.setHours(e.target.valueAsDate.getHours() + 1);
+              const timeOffset = e.target.valueAsDate.getTimezoneOffset();
+
+              deadlineRef.current.setHours(
+                e.target.valueAsDate.getHours() + timeOffset / 60
+              );
               deadlineRef.current.setMinutes(e.target.valueAsDate.getMinutes());
             }}
           />

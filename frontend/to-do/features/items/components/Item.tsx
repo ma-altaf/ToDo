@@ -1,11 +1,15 @@
 "use client";
 
-import { dateFromISO } from "@/shared/utils";
+import { dateFromISO } from "@/shared/services/utils";
 import { TToDoItem } from "../services/types";
 import Status from "./ItemStatus";
+import { useState } from "react";
+import { BiSolidEditAlt } from "react-icons/bi";
+import UpdateItemModal from "./UpdateItemModal";
 
 export default function Item({ item }: { item: TToDoItem }) {
   const { deadline, title, description, status } = item;
+  const [isOpen, setIsOpen] = useState(false);
 
   const deadlineDate = dateFromISO(deadline);
 
@@ -22,16 +26,28 @@ export default function Item({ item }: { item: TToDoItem }) {
               : "bg-white/10"
           }`}
         >
-          {deadlineDate.toLocaleDateString()}
+          {deadlineDate.toLocaleDateString("en-ca")}
           <hr className="border-2 mx-2 rounded-full" />
-          {deadlineDate.toLocaleTimeString([], {
+          {deadlineDate.toLocaleTimeString("en-ca", {
             hour: "2-digit",
             minute: "2-digit",
-            hourCycle: "h24",
+            hourCycle: "h23",
           })}
         </div>
       </span>
-      <Status status={status} />
+
+      <span className="flex flex-row justify-center items-center h-fit">
+        <button
+          className="rounded-md p-1 bg-white/10 size-fit mr-2"
+          onClick={() => setIsOpen(true)}
+        >
+          <BiSolidEditAlt />
+        </button>
+
+        <Status status={status} />
+      </span>
+
+      {isOpen && <UpdateItemModal data={item} setIsOpen={setIsOpen} />}
     </li>
   );
 }

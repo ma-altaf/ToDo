@@ -42,9 +42,9 @@ export async function getItemById(id: number): Promise<TToDoItem> {
 }
 
 export async function updateItemById(
-  id: number,
+  id: string,
   updatedItem: Pick<TToDoItem, "title" | "description" | "deadline" | "status">
-) {
+): Promise<TToDoItem | null> {
   return await fetch(`${TODO_URL}/${id}`, {
     method: "PUT",
     headers: {
@@ -54,9 +54,7 @@ export async function updateItemById(
     body: JSON.stringify(updatedItem),
   })
     .then(async (res) => {
-      console.log("success");
-
-      console.log(await res.json());
+      return await res.json();
     })
     .catch((e) => {
       console.log("failed");

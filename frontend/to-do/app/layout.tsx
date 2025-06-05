@@ -33,6 +33,7 @@ export default async function RootLayout({
         <TodoContextProvider todosPromise={todosPromise}>
           {children}
         </TodoContextProvider>
+        <div id="portal" />
       </body>
     </html>
   );
