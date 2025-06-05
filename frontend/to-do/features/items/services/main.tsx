@@ -8,24 +8,18 @@ export async function addItem(
   if (newItem.title.trim().length == 0)
     return Promise.reject(new Error("Title is required."));
 
-  try {
-    const promise = await fetch(TODO_URL + "/add", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newItem),
-    });
+  const promise = await fetch(TODO_URL + "/add", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newItem),
+  });
 
-    if (promise.status >= 400) return Promise.reject(await promise.json());
+  if (promise.status >= 400) return Promise.reject(await promise.json());
 
-    return promise.json();
-  } catch (error) {
-    console.log(error);
-
-    return Promise.reject("fetch failed");
-  }
+  return promise.json();
 }
 
 export async function getItems(): Promise<TToDoItem[]> {
@@ -62,10 +56,10 @@ export async function updateItemById(
     });
 }
 
-export async function deleteItemById(id: number) {
-  return (
-    await fetch(`${TODO_URL}/${id}`, {
-      method: "DELETE",
-    })
-  ).json();
+export async function deleteItemById(id: string) {
+  const promise = await fetch(`${TODO_URL}/${id}`, {
+    method: "DELETE",
+  });
+  if (promise.status >= 400) return Promise.reject(await promise.json());
+  return promise;
 }

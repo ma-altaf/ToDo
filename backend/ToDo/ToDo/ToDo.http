@@ -30,7 +30,7 @@ Content-Type: application/json
 
 ###
 
-DELETE {{ToDo_HostAddress}}/api/todo/4
+DELETE {{ToDo_HostAddress}}/api/todo/a29466ac-d632-464b-a385-fbfbb536fc89
 Content-Type: application/json
 
 ###

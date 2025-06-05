@@ -10,7 +10,7 @@ import {
 } from "react";
 import { TToDoItem } from "../services/types";
 import { useTodosContext } from "./TodoProvider";
-import { updateItemById } from "../services/main";
+import { deleteItemById, updateItemById } from "../services/main";
 import { dateFromISO } from "@/shared/services/utils";
 
 export default function UpdateItemModal({
@@ -59,6 +59,26 @@ export default function UpdateItemModal({
     });
 
     setIsOpen(false);
+  }
+
+  function deleteItem(id: string) {
+    startTransition(() =>
+      dispatch({
+        type: "delete",
+        id,
+      })
+    );
+
+    startTransition(async () => {
+      try {
+        await deleteItemById(id);
+
+        setDbTodos((prev) => prev.filter((item) => item.id != id));
+        setIsOpen(false);
+      } catch {
+        setWarning("failed to delete.");
+      }
+    });
   }
 
   return (
@@ -144,6 +164,12 @@ export default function UpdateItemModal({
         )}
 
         <span className="w-full flex flex-row justify-end">
+          <button
+            className="px-3 py-1 rounded-md bg-red-500/10 text-red-500 w-fit mr-auto"
+            onClick={() => deleteItem(data.id)}
+          >
+            Delete
+          </button>
           <button
             className="py-1 px-3 mr-2 rounded-md w-fit"
             onClick={() => setIsOpen(false)}

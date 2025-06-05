@@ -65,6 +65,9 @@ export default function TodoContextProvider({
 
         return [...state];
       }
+      case "delete": {
+        return state.filter(({ id }) => action.id != id);
+      }
     }
   }
 

@@ -22,4 +22,8 @@ export type TToDoReducer =
       type: "update";
       id: string;
       data: Pick<TToDoItem, "deadline" | "title" | "description">;
+    }
+  | {
+      type: "delete";
+      id: string;
     };
