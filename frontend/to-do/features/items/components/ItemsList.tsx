@@ -13,7 +13,9 @@ export default function ItemsList() {
         todos.map((item, i) => (
           <span key={i}>
             <Item item={item} />
-            {i < todos.length && <hr className="w-full my-2 border-white/10" />}
+            {i < todos.length - 1 && (
+              <hr className="w-full my-2 border-white/10" />
+            )}
           </span>
         ))
       ) : (
