@@ -1,7 +1,7 @@
 "use client";
 
 import { dateFromISO } from "@/shared/services/utils";
-import { TToDoItem } from "../services/types";
+import { EStatus, TToDoItem } from "../services/types";
 import Status from "./ItemStatus";
 import { useState } from "react";
 import { BiSolidEditAlt } from "react-icons/bi";
@@ -37,12 +37,14 @@ export default function Item({ item }: { item: TToDoItem }) {
       </span>
 
       <span className="flex flex-row justify-center items-center h-fit">
-        <button
-          className="rounded-md p-1 bg-white/10 size-fit mr-2"
-          onClick={() => setIsOpen(true)}
-        >
-          <BiSolidEditAlt />
-        </button>
+        {item.status != EStatus.syncing && (
+          <button
+            className="rounded-md p-1 bg-white/10 size-fit mr-2"
+            onClick={() => setIsOpen(true)}
+          >
+            <BiSolidEditAlt />
+          </button>
+        )}
 
         <Status status={status} />
       </span>
