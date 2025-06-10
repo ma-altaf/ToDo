@@ -46,7 +46,7 @@ export default function Item({ item }: { item: TToDoItem }) {
           </button>
         )}
 
-        <Status status={status} />
+        <Status item={item} status={status} />
       </span>
 
       {isOpen && <UpdateItemModal data={item} setIsOpen={setIsOpen} />}

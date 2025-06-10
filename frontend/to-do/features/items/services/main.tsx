@@ -38,22 +38,19 @@ export async function getItemById(id: number): Promise<TToDoItem> {
 export async function updateItemById(
   id: string,
   updatedItem: Pick<TToDoItem, "title" | "description" | "deadline" | "status">
-): Promise<TToDoItem | null> {
-  return await fetch(`${TODO_URL}/${id}`, {
+): Promise<TToDoItem> {
+  const promise = await fetch(`${TODO_URL}/${id}`, {
     method: "PUT",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
     body: JSON.stringify(updatedItem),
-  })
-    .then(async (res) => {
-      return await res.json();
-    })
-    .catch((e) => {
-      console.log("failed");
-      console.log(e);
-    });
+  });
+
+  if (promise.status >= 400) return Promise.reject(await promise.json());
+
+  return promise.json();
 }
 
 export async function deleteItemById(id: string) {

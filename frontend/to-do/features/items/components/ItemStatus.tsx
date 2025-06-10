@@ -1,36 +1,26 @@
-import React from "react";
-import { EStatus } from "../services/types";
+"use client";
 
-export default function Status({ status }: { status: EStatus }) {
-  const main = () => {
-    switch (status) {
-      case EStatus.syncing:
-        return (
-          <div className="size-3 border-2 border-white/25 border-r-white bg-white/10 rounded-full animate-spin"></div>
-        );
+import React, { useState } from "react";
+import { EStatus, TToDoItem } from "../services/types";
+import StatusInner from "./StatusInner";
+import UpdateStatus from "./UpdateStatus";
 
-      case EStatus.blocked:
-        return (
-          <div className="size-3 border-2 border-red-500 bg-red-500/10 rounded-full animate-spin"></div>
-        );
+export default function Status({
+  status,
+  item,
+}: {
+  status: EStatus;
+  item: TToDoItem;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
 
-      case EStatus.completed:
-        return (
-          <div className="size-3 border-2 border-green-500 bg-green-500/10 rounded-full"></div>
-        );
-
-      case EStatus.todo:
-        return (
-          <div className="size-3 border-2 border-white bg-white/10 rounded-full"></div>
-        );
-
-      default:
-        return <p className="text-xs">?</p>;
-    }
-  };
   return (
-    <>
-      <div onClick={() => console.log("Todo: Status change")}>{main()}</div>
-    </>
+    <span className="relative">
+      <div onClick={() => item.status != EStatus.syncing && setIsOpen(true)}>
+        <StatusInner status={status} />
+      </div>
+
+      {isOpen && <UpdateStatus item={item} setIsOpen={setIsOpen} />}
+    </span>
   );
 }

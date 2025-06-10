@@ -68,6 +68,15 @@ export default function TodoContextProvider({
       case "delete": {
         return state.filter(({ id }) => action.id != id);
       }
+
+      case "status": {
+        return state.map((item) => {
+          if (item.id == action.id) {
+            item.status = action.status;
+          }
+          return item;
+        });
+      }
     }
   }
 

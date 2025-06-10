@@ -83,7 +83,10 @@ export default function UpdateItemModal({
 
   return (
     <Modal setIsOpen={setIsOpen}>
-      <div className="w-full rounded-md border-2 border-white/10 flex flex-col p-2">
+      <div
+        className="w-full m-2 md:w-3/5 rounded-md border-2 bg-background border-white/10 flex flex-col p-2"
+        onClick={(e) => e.stopPropagation()}
+      >
         <label htmlFor="title">Title:</label>
         <input
           className="py-1 px-2 mb-2 w-full rounded-md bg-white/5"
