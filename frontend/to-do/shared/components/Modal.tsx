@@ -14,9 +14,7 @@ export default function Modal({
         onClick={() => setIsOpen(false)}
         className="absolute top-0 left-0 w-screen h-screen flex justify-center items-center bg-black/50"
       >
-        <span className="bg-background" onClick={(e) => e.stopPropagation()}>
-          {children}
-        </span>
+        {children}
       </div>
     </ClientOnlyPortal>
   );
