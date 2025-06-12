@@ -61,7 +61,7 @@ namespace ToDo.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> GetTodoItemById(string id, UpdateTodoItem newItem)
+        public async Task<IActionResult> UpdateTodoItemById(string id, UpdateTodoItem newItem)
         {
             TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
@@ -72,6 +72,7 @@ namespace ToDo.Controllers
             todoItem.Title = newItem.Title.Trim();
             todoItem.Description = newItem.Description?.Trim();
             todoItem.Deadline = newItem.Deadline;
+            todoItem.Status = newItem.Status;
 
             await ctx.SaveChangesAsync();
 
