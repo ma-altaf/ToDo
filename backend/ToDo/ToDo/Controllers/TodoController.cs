@@ -20,7 +20,7 @@ namespace ToDo.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddTodoItem(AddTodoItemDto item)
         {
-            if (item.Title.Trim().Length == 0) return BadRequest(new { Message = "Title is required." });
+            if (item.Title.Trim().Length == 0) return BadRequest(new ErrorDto("Title is required."));
 
             try
             {
@@ -37,7 +37,7 @@ namespace ToDo.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { ex.Message });
+                return BadRequest(new ErrorDto(ex.Message));
             }
 
         }
@@ -55,19 +55,19 @@ namespace ToDo.Controllers
         {
             TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
-            if (todoItem == null) return NotFound(new { Message = $"{id} not a valid item id." });
+            if (todoItem == null) return NotFound(new ErrorDto($"{id} not a valid item id."));
 
             return Ok(todoItem);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTodoItemById(string id, UpdateTodoItem newItem)
+        public async Task<IActionResult> UpdateTodoItemById(string id, UpdateTodoItemDto newItem)
         {
             TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
-            if (todoItem == null) return NotFound(new { Message = $"{id} not a valid item id." });
+            if (todoItem == null) return NotFound(new ErrorDto($"{id} not a valid item id."));
 
-            if (newItem.Title.Trim().Length == 0) return BadRequest(new { Message = "Title is required." });
+            if (newItem.Title.Trim().Length == 0) return BadRequest(new ErrorDto("Title is required."));
 
             todoItem.Title = newItem.Title.Trim();
             todoItem.Description = newItem.Description?.Trim();
@@ -94,7 +94,7 @@ namespace ToDo.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { ex.Message });
+                return BadRequest(new ErrorDto(ex.Message));
             }
 
             return Ok();
@@ -115,7 +115,7 @@ namespace ToDo.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { ex.Message });
+                return BadRequest(new ErrorDto(ex.Message));
             }
 
             return Ok();

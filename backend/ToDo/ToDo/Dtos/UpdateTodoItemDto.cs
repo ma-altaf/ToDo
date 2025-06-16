@@ -2,7 +2,7 @@
 
 namespace ToDo.Dtos
 {
-    public record class UpdateTodoItem(
+    public record class UpdateTodoItemDto(
         string Title,
         string? Description,
         DateTime Deadline,
