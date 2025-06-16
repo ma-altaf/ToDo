@@ -50,7 +50,7 @@ namespace ToDO.Tests
         [InlineData(0)]
         [InlineData(5)]
         [InlineData(10)]
-        public async Task GetTodoItems_ShouldReturnEmptyList(int count)
+        public async Task GetTodoItems_ShouldReturnListWithEqualLength(int count)
         {
             // Arrange
             var addTodoItemDto = new AddTodoItemDto
