@@ -84,7 +84,7 @@ namespace ToDo.Controllers
         {
             TodoItem? todoItem = await ctx.TodoItems.FindAsync(id);
 
-            if (todoItem == null) return NotFound(null);
+            if (todoItem == null) return NotFound(new ErrorDto($"{id} not a valid item id."));
 
             ctx.TodoItems.Remove(todoItem);
 
@@ -104,8 +104,6 @@ namespace ToDo.Controllers
         public async Task<IActionResult> DeleteTodoItems()
         {
             List<TodoItem> todoItems = await ctx.TodoItems.ToListAsync();
-
-            if (todoItems == null) return NotFound(null);
 
             ctx.TodoItems.RemoveRange(todoItems);
 

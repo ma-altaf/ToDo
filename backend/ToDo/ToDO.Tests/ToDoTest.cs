@@ -19,8 +19,34 @@ namespace ToDO.Tests
             _sut = new TodoController(context);
         }
 
+        [Theory]
+        [InlineData("")]
+        [InlineData("   ")]
+        public async Task AddTodoItem_EmptyTitle_ShouldReturnBadRequest(string title)
+        {
+            // Arrange
+            var addTodoItemDto = new AddTodoItemDto
+                (
+                    Title: title,
+                    Description: "Test Description",
+                    Deadline: DateTime.Now
+                );
+
+            // Act
+            var result = await _sut.AddTodoItem(addTodoItemDto);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<BadRequestObjectResult>();
+
+            var content = result.As<BadRequestObjectResult>().Value.As<ErrorDto>();
+
+            content.Should().NotBeNull();
+            content.Message.Should().Be("Title is required.");
+        }
+
         [Fact]
-        public async Task AddTodoItem_ShouldReturnTodo()
+        public async Task AddTodoItem_ValidItem_ShouldReturnTodo()
         {
             // Arrange
             var addTodoItemDto = new AddTodoItemDto
@@ -80,7 +106,7 @@ namespace ToDO.Tests
 
 
         [Fact]
-        public async Task GetTodoItemById_ShouldReturnSameItem()
+        public async Task GetTodoItemById_ValidId_ShouldReturnSameItem()
         {
             // Arrange
             var addTodoItemDto = new AddTodoItemDto
@@ -113,7 +139,7 @@ namespace ToDO.Tests
         }
 
         [Fact]
-        public async Task GetTodoItemById_ShouldReturnNotFound()
+        public async Task GetTodoItemById_IncorrectId_ShouldReturnNotFound()
         {
             // Arrange
             var incorrectId = "incorrect";
@@ -136,7 +162,7 @@ namespace ToDO.Tests
 
 
         [Fact]
-        public async Task UpdateTodoItemById_ShouldBeUpdatedFully()
+        public async Task UpdateTodoItemById_ValidId_ShouldBeUpdatedFully()
         {
             // Arrange
             var addTodoItemDto = new AddTodoItemDto
@@ -178,7 +204,74 @@ namespace ToDO.Tests
         }
 
         [Fact]
-        public async Task DeleteTodoItemById_ShouldRemoveItemWithId()
+        public async Task UpdateTodoItemById_IncorrectId_ShouldReturnNotFound()
+        {
+            // Arrange
+            var incorrectId = "incorrect";
+
+            var updatedTodoItem = new UpdateTodoItemDto
+                (
+                Title: "new Title",
+                Description: "new Description",
+                Deadline: DateTime.Now.AddDays(1),
+                Status: TodoItem.StatusEnum.completed
+                );
+
+            // Act
+            var result = await _sut.UpdateTodoItemById(incorrectId, updatedTodoItem);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NotFoundObjectResult>();
+
+            var content = result.As<NotFoundObjectResult>().Value.As<ErrorDto>();
+
+            content.Should().NotBeNull();
+            content.Message.Should().Be($"{incorrectId} not a valid item id.");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("   ")]
+        public async Task UpdateTodoItemById_IncorrectTitle_ShouldReturnBadRequest(string title)
+        {
+            // Arrange
+            var addTodoItemDto = new AddTodoItemDto
+                (
+                    Title: "Test",
+                    Description: "Test Description",
+                    Deadline: DateTime.Now
+                );
+
+            var item = await _sut.AddTodoItem(addTodoItemDto);
+
+            var itemId = item.As<OkObjectResult>().Value.As<TodoItem>().Id;
+
+            itemId.Should().NotBeNull();
+
+            var updatedTodoItem = new UpdateTodoItemDto
+                (
+                Title: title,
+                Description: "new Description",
+                Deadline: DateTime.Now.AddDays(1),
+                Status: TodoItem.StatusEnum.completed
+                );
+
+            // Act
+            var result = await _sut.UpdateTodoItemById(itemId, updatedTodoItem);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<BadRequestObjectResult>();
+
+            var content = result.As<BadRequestObjectResult>().Value.As<ErrorDto>();
+
+            content.Should().NotBeNull();
+            content.Message.Should().Be("Title is required.");
+        }
+
+        [Fact]
+        public async Task DeleteTodoItemById_ValidId_ShouldRemoveItemWithId()
         {
             var itemRefs = new List<string>();
 
@@ -215,5 +308,61 @@ namespace ToDO.Tests
                 getItemById.Should().BeOfType<NotFoundObjectResult>();
             }
         }
+
+        [Fact]
+        public async Task DeleteTodoItemById_IncorrectId_ShouldReturnNotFound()
+        {
+            // Arrange
+            var incorrectId = "incorrect";
+
+            // Act
+            var result = await _sut.DeleteTodoItemById(incorrectId);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NotFoundObjectResult>();
+
+            var content = result.As<NotFoundObjectResult>().Value.As<ErrorDto>();
+
+            content.Should().NotBeNull();
+            content.Message.Should().Be($"{incorrectId} not a valid item id.");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(10)]
+        public async Task DeleteTodoItems_ShouldReturnOk(int count)
+        {
+            // Arrange
+            var addTodoItemDto = new AddTodoItemDto
+                (
+                    Title: "Test",
+                    Description: "Test Description",
+                    Deadline: DateTime.Now
+                );
+
+            for (int i = 0; i < count; i++)
+            {
+                await _sut.AddTodoItem(addTodoItemDto);
+            }
+
+            // Act
+            var result = await _sut.DeleteTodoItems();
+
+            // Result
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkResult>();
+
+            var getItems = await _sut.GetTodoItems();
+
+            getItems.Should().NotBeNull();
+            getItems.Should().BeOfType<OkObjectResult>();
+
+            var content = getItems.As<OkObjectResult>().Value.As<List<TodoItem>>();
+
+            content.Should().NotBeNull();
+            content.Count.Should().Be(0);
+        }
     }
+
 }
